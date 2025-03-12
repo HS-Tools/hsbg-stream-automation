@@ -1,9 +1,7 @@
-﻿using MahApps.Metro.Controls;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace HSBG_Ads_Predictions_for_Twitch.Controls
@@ -15,15 +13,51 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
     {
         private static Flyout _flyout;
 
-        // ToDo: The window shouldn't be statically named
-        private static string panelName = "pluginStackPanelView";
-        private StackPanel stackPanel;
-
         public SettingsView()
         {
             InitializeComponent();
-            this.getPanel();
-            initTranslation();
+            InitializeControls();
+        }
+
+        private void InitializeControls()
+        {
+            // Load saved prediction choices if they exist
+            if (Properties.Settings.Default.PredictionChoices != null)
+            {
+                var savedChoices = Properties.Settings.Default.PredictionChoices.Cast<string>().ToList();
+                foreach (ListBoxItem item in PredictionChoices.Items)
+                {
+                    item.IsSelected = savedChoices.Contains(item.Content.ToString());
+                }
+            }
+        }
+
+        private void AdTimeInput_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double?> e)
+        {
+            if (e.NewValue.HasValue)
+            {
+                Properties.Settings.Default.AdTime = (int)e.NewValue.Value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void PredictionChoices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItems = PredictionChoices.SelectedItems.Cast<ListBoxItem>()
+                .Select(item => item.Content.ToString().Replace("Top ", "")) // Remove "Top " prefix
+                .ToList();
+
+            if (selectedItems.Count == 0) // Ensure at least one option is selected
+            {
+                // If nothing is selected, select Top 1 by default
+                var firstItem = PredictionChoices.Items[0] as ListBoxItem;
+                firstItem.IsSelected = true;
+                return;
+            }
+
+            Properties.Settings.Default.PredictionChoices = new System.Collections.Specialized.StringCollection();
+            Properties.Settings.Default.PredictionChoices.AddRange(selectedItems.ToArray());
+            Properties.Settings.Default.Save();
         }
 
         public static Flyout Flyout
@@ -38,8 +72,6 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             }
         }
 
-        public IEnumerable<Orientation> OrientationTypes => Enum.GetValues(typeof(Orientation)).Cast<Orientation>();
-
         private static Flyout CreateSettingsFlyout()
         {
             var settings = new Flyout();
@@ -49,49 +81,6 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             settings.Content = new SettingsView();
             Core.MainWindow.Flyouts.Items.Add(settings);
             return settings;
-        }
-
-        private void BtnShowHide_Click(object sender, RoutedEventArgs e)
-        {
-            if (stackPanel != null)
-            {
-                bool IsVis = (stackPanel.Visibility == Visibility.Visible);
-                stackPanel.Visibility = IsVis ? Visibility.Collapsed : Visibility.Visible;
-                BtnShowHide.Content = IsVis ? LocalizeTools.GetLocalized("LabelShow") : LocalizeTools.GetLocalized("LabelHide");
-            }
-        }
-
-        private void BtnUnlock_Click(object sender, RoutedEventArgs e)
-        {
-            if (stackPanel != null)
-            {
-                bool IsUnlocked = HSBG_Ads_Predictions_for_Twitch.inputMoveManager.Toggle();
-                BtnShowHide.IsEnabled = !IsUnlocked;
-                BtnUnlock.Content = IsUnlocked ? LocalizeTools.GetLocalized("LabelLock") : BtnUnlock.Content = LocalizeTools.GetLocalized("LabelUnlock");
-
-                if (IsUnlocked && (stackPanel.Visibility != Visibility.Visible))
-                {
-                    stackPanel.Visibility = Visibility.Visible;
-                    BtnShowHide.Content = LocalizeTools.GetLocalized("LabelHide");
-                }
-            }
-        }
-        /// <summary>
-        /// Gets the reference to our display StackPanel.
-        /// </summary>
-        private void getPanel()
-        {
-            this.stackPanel = Core.OverlayCanvas.FindChild<StackPanel>(panelName);
-        }
-        /// <summary>
-        /// Does our default translation, just till I fix the XAML Hooks.
-        /// </summary>
-        public void initTranslation()
-        {
-            BtnUnlock.Content = LocalizeTools.GetLocalized("LabelUnlock");
-            BtnShowHide.Content = LocalizeTools.GetLocalized("LabelShow");
-            LblOpacity.Content = LocalizeTools.GetLocalized("LabelOpacity");
-            LblScale.Content = LocalizeTools.GetLocalized("LabelScale");
         }
     }
 }

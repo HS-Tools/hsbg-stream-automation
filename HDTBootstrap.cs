@@ -26,10 +26,10 @@ namespace HSBG_Ads_Predictions_for_Twitch
 // ToDo: put your name as the author
 
 
-        public string ButtonText => LocalizeTools.GetLocalized("LabelSettings");
+        public string ButtonText => "Settings";
 
        // ToDo: Update the Plug-in Description in StringsResource.resx        
-       public string Description => LocalizeTools.GetLocalized("TextDescription");
+       public string Description => "Automatically creates predictions and runs ads on Twitch for Hearthstone Battlegrounds Streamers";
 
         /// <summary>
         /// Gets or sets the main <see cref="MenuItem">Menu Item</see>.

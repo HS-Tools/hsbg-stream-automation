@@ -8,82 +8,92 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HSBG_Ads_Predictions_for_Twitch.Properties
-{
-
-
+namespace HSBG_Ads_Predictions_for_Twitch.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.13.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public double Scale
-        {
-            get
-            {
+        public double Scale {
+            get {
                 return ((double)(this["Scale"]));
             }
-            set
-            {
+            set {
                 this["Scale"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public double Opacity
-        {
-            get
-            {
+        public double Opacity {
+            get {
                 return ((double)(this["Opacity"]));
             }
-            set
-            {
+            set {
                 this["Opacity"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public double Top
-        {
-            get
-            {
+        public double Top {
+            get {
                 return ((double)(this["Top"]));
             }
-            set
-            {
+            set {
                 this["Top"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public double Left
-        {
-            get
-            {
+        public double Left {
+            get {
                 return ((double)(this["Left"]));
             }
-            set
-            {
+            set {
                 this["Left"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("90")]
+        public int AdTime {
+            get {
+                return ((int)(this["AdTime"]));
+            }
+            set {
+                this["AdTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsd=\"http://www.w3." +
+            "org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <s" +
+            "tring>1, 2, 3, 4</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection PredictionChoices {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["PredictionChoices"]));
+            }
+            set {
+                this["PredictionChoices"] = value;
             }
         }
     }

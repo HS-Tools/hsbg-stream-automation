@@ -360,12 +360,42 @@ namespace HSBG_Ads_Predictions_for_Twitch
                 await _twitchIntegration.CancelActivePredictionsAsync();
                 
                 var heroName = Core.Game.Player.Hero.Card.LocalizedName ?? "Hero";
-                var possiblePlacements = _config.Predictions.PossiblePlacements;
-                _currentTargetPlace = possiblePlacements[_random.Next(possiblePlacements.Length)];
+                
+                // Get prediction choices from settings with better parsing
+                int[] predictionChoices;
+                try 
+                {
+                    // Get the selected choices, default to "1" if none are set
+                    var selectedChoices = Settings.Default.PredictionChoices;
+                    if (selectedChoices == null || selectedChoices.Count == 0)
+                    {
+                        predictionChoices = new[] { 1 };
+                    }
+                    else
+                    {
+                        predictionChoices = selectedChoices.Cast<string>()
+                            .Select(s => int.Parse(s.Trim()))
+                            .Where(n => n >= 1 && n <= 8)
+                            .ToArray();
+
+                        // If no valid choices were parsed, default to 1
+                        if (predictionChoices == null || predictionChoices.Length == 0)
+                        {
+                            predictionChoices = new[] { 1 };
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // If parsing fails, default to 1
+                    predictionChoices = new[] { 1 };
+                }
+                
+                _currentTargetPlace = predictionChoices[_random.Next(predictionChoices.Length)];
                 
                 var title = $"Top {_currentTargetPlace} with {heroName}?";
                 var outcomes = new List<string> { "Yes", "No" };
-                await _twitchIntegration.CreatePredictionAsync(title, outcomes, _config.Predictions.DurationSeconds);
+                await _twitchIntegration.CreatePredictionAsync(title, outcomes, 120); // Fixed prediction duration
             }
             catch (Exception ex)
             {
@@ -393,8 +423,8 @@ namespace HSBG_Ads_Predictions_for_Twitch
                 var isTop = placement <= _currentTargetPlace;
                 await _twitchIntegration.EndPredictionAsync(isTop);
 
-                // Run ad after game ends
-                await _twitchIntegration.RunAdAsync(_config.Ads.DurationSeconds);
+                // Run ad using the duration from settings
+                await _twitchIntegration.RunAdAsync(Settings.Default.AdTime);
             }
             catch (Exception ex)
             {

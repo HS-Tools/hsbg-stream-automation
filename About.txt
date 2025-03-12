@@ -31,5 +31,5 @@ Predictions to run will be an array of ints where an int refers to the placement
 Example: [1, 2, 3]: will randomly choose between top 1, top 2 or top 3
 
 Phase 3:
-Twitch OAuth to populate config variables
+Twitch OAuth to populate config variables related to twitch credentials
 
