@@ -63,25 +63,20 @@ namespace HSBG_Ads_Predictions_for_Twitch
     public class TwitchConfig
     {
         public string ClientId { get; private set; }
-        public string ClientSecret { get; private set; }
         public string OAuthToken { get; private set; }
-        public string BroadcasterId { get; private set; }
 
         public TwitchConfig(TwitchSettings settings)
         {
             ClientId = settings.ClientId;
-            ClientSecret = settings.ClientSecret;
             OAuthToken = settings.OAuthToken;
-            BroadcasterId = settings.BroadcasterId;
         }
     }
 
     public class TwitchIntegration
     {
         private readonly string _clientId;
-        private readonly string _clientSecret;
         private readonly string _oauthToken;
-        private readonly string _broadcasterId;
+        private string _broadcasterId;
         private readonly string _baseUrl = "https://api.twitch.tv/helix";
         private string _currentPredictionId;
         private List<Outcome> _currentOutcomes;
@@ -89,17 +84,39 @@ namespace HSBG_Ads_Predictions_for_Twitch
         public TwitchIntegration(TwitchConfig config)
         {
             _clientId = config.ClientId;
-            _clientSecret = config.ClientSecret;
             _oauthToken = config.OAuthToken;
-            _broadcasterId = config.BroadcasterId;
         }
 
         private HttpClient CreateHttpClient()
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Client-ID", _clientId);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _oauthToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _oauthToken.TrimStart("Bearer ".ToCharArray()));
             return client;
+        }
+
+        public async Task InitializeAsync()
+        {
+            _broadcasterId = await GetBroadcasterIdAsync();
+            if (string.IsNullOrEmpty(_broadcasterId))
+            {
+                throw new Exception("Failed to get broadcaster ID. Please check your Twitch credentials.");
+            }
+        }
+
+        private async Task<string> GetBroadcasterIdAsync()
+        {
+            using (var client = CreateHttpClient())
+            {
+                var response = await client.GetAsync($"{_baseUrl}/users");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var userData = JsonConvert.DeserializeObject<UserResponse>(content);
+                    return userData?.Data?.FirstOrDefault()?.Id;
+                }
+                throw new Exception($"Failed to get user data: {response.StatusCode}");
+            }
         }
 
         public async Task<string> CreatePredictionAsync(string title, List<string> outcomes, int duration)
@@ -254,6 +271,18 @@ namespace HSBG_Ads_Predictions_for_Twitch
             public string Id { get; set; }
             public string Title { get; set; }
         }
+
+        public class UserResponse
+        {
+            public List<UserData> Data { get; set; }
+        }
+
+        public class UserData
+        {
+            public string Id { get; set; }
+            public string Login { get; set; }
+            public string DisplayName { get; set; }
+        }
     }
 
     public class HSBG_Ads_Predictions_for_Twitch : IDisposable
@@ -327,16 +356,35 @@ namespace HSBG_Ads_Predictions_for_Twitch
             }
         }
 
-        private void InitTwitch()
+        private async void InitTwitch()
         {
             try
             {
-                _twitchConfig = new TwitchConfig(_config.Twitch);
+                // Check if we have valid credentials
+                if (string.IsNullOrEmpty(Settings.Default.ClientId) || string.IsNullOrEmpty(Settings.Default.AccessToken))
+                {
+                    Hearthstone_Deck_Tracker.Utility.Logging.Log.Info("Twitch credentials not configured. Please set them in the plugin settings.");
+                    return;
+                }
+
+                var twitchSettings = new TwitchSettings
+                {
+                    ClientId = Settings.Default.ClientId,
+                    OAuthToken = Settings.Default.AccessToken.TrimStart("Bearer ".ToCharArray()) // Remove Bearer prefix if present
+                };
+
+                _twitchConfig = new TwitchConfig(twitchSettings);
                 _twitchIntegration = new TwitchIntegration(_twitchConfig);
+                await _twitchIntegration.InitializeAsync();
+                Hearthstone_Deck_Tracker.Utility.Logging.Log.Info("Twitch integration initialized successfully");
             }
             catch (Exception ex)
             {
                 Hearthstone_Deck_Tracker.Utility.Logging.Log.Error($"Failed to initialize Twitch integration: {ex.Message}");
+                if (ex.Message.Contains("Unauthorized"))
+                {
+                    Hearthstone_Deck_Tracker.Utility.Logging.Log.Error("Please check your Twitch credentials in the plugin settings.");
+                }
             }
         }
 
@@ -356,6 +404,14 @@ namespace HSBG_Ads_Predictions_for_Twitch
             {
                 if (_predictionStarted) return;
                 _predictionStarted = true;
+
+                // Check if predictions are enabled and we have choices selected
+                if (!Settings.Default.AutoRunPredictions || 
+                    Settings.Default.PredictionChoices == null || 
+                    Settings.Default.PredictionChoices.Count == 0)
+                {
+                    return;
+                }
                 
                 await _twitchIntegration.CancelActivePredictionsAsync();
                 
@@ -365,37 +421,26 @@ namespace HSBG_Ads_Predictions_for_Twitch
                 int[] predictionChoices;
                 try 
                 {
-                    // Get the selected choices, default to "1" if none are set
-                    var selectedChoices = Settings.Default.PredictionChoices;
-                    if (selectedChoices == null || selectedChoices.Count == 0)
-                    {
-                        predictionChoices = new[] { 1 };
-                    }
-                    else
-                    {
-                        predictionChoices = selectedChoices.Cast<string>()
-                            .Select(s => int.Parse(s.Trim()))
-                            .Where(n => n >= 1 && n <= 8)
-                            .ToArray();
+                    predictionChoices = Settings.Default.PredictionChoices.Cast<string>()
+                        .Select(s => int.Parse(s.Trim()))
+                        .Where(n => n >= 1 && n <= 8)
+                        .ToArray();
 
-                        // If no valid choices were parsed, default to 1
-                        if (predictionChoices == null || predictionChoices.Length == 0)
-                        {
-                            predictionChoices = new[] { 1 };
-                        }
+                    if (predictionChoices == null || predictionChoices.Length == 0)
+                    {
+                        return;
                     }
                 }
                 catch (Exception)
                 {
-                    // If parsing fails, default to 1
-                    predictionChoices = new[] { 1 };
+                    return;
                 }
                 
                 _currentTargetPlace = predictionChoices[_random.Next(predictionChoices.Length)];
                 
                 var title = $"Top {_currentTargetPlace} with {heroName}?";
                 var outcomes = new List<string> { "Yes", "No" };
-                await _twitchIntegration.CreatePredictionAsync(title, outcomes, 120); // Fixed prediction duration
+                await _twitchIntegration.CreatePredictionAsync(title, outcomes, 120);
             }
             catch (Exception ex)
             {
@@ -410,21 +455,28 @@ namespace HSBG_Ads_Predictions_for_Twitch
 
             try
             {
-                var playerEntity = Core.Game.Entities.Values.FirstOrDefault(x => x.IsPlayer);
-                var playerPlaceEntity = Core.Game.Entities.Values
-                    .FirstOrDefault(e => e.GetTag(GameTag.PLAYER_ID) == playerEntity.GetTag(GameTag.PLAYER_ID)
-                                    && e.HasTag(GameTag.PLAYER_LEADERBOARD_PLACE));
+                // Only resolve prediction if predictions are enabled and we have a target place
+                if (Settings.Default.AutoRunPredictions && _currentTargetPlace > 0)
+                {
+                    var playerEntity = Core.Game.Entities.Values.FirstOrDefault(x => x.IsPlayer);
+                    var playerPlaceEntity = Core.Game.Entities.Values
+                        .FirstOrDefault(e => e.GetTag(GameTag.PLAYER_ID) == playerEntity.GetTag(GameTag.PLAYER_ID)
+                                        && e.HasTag(GameTag.PLAYER_LEADERBOARD_PLACE));
 
-                // Get player's final placement
-                var placement = playerPlaceEntity?.GetTag(GameTag.PLAYER_LEADERBOARD_PLACE) ??
-                                    playerEntity.GetTag(GameTag.PLAYER_LEADERBOARD_PLACE);
+                    // Get player's final placement
+                    var placement = playerPlaceEntity?.GetTag(GameTag.PLAYER_LEADERBOARD_PLACE) ??
+                                        playerEntity.GetTag(GameTag.PLAYER_LEADERBOARD_PLACE);
 
-                // Resolve prediction based on placement and target place
-                var isTop = placement <= _currentTargetPlace;
-                await _twitchIntegration.EndPredictionAsync(isTop);
+                    // Resolve prediction based on placement and target place
+                    var isTop = placement <= _currentTargetPlace;
+                    await _twitchIntegration.EndPredictionAsync(isTop);
+                }
 
-                // Run ad using the duration from settings
-                await _twitchIntegration.RunAdAsync(Settings.Default.AdTime);
+                // Only run ad if auto-run ads is enabled
+                if (Settings.Default.AutoRunAds)
+                {
+                    await _twitchIntegration.RunAdAsync(Settings.Default.AdTime);
+                }
             }
             catch (Exception ex)
             {

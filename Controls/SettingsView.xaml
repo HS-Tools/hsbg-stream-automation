@@ -24,9 +24,42 @@
                 FontSize="24"
                 FontWeight="Bold"
                 Margin="0,0,0,20"/>
+
+            <!-- Twitch Credentials Section -->
+            <StackPanel Margin="0,0,0,20">
+                <DockPanel Margin="0,0,0,10">
+                    <TextBlock 
+                        Text="Twitch Credentials"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        DockPanel.Dock="Left"/>
+                    <Button 
+                        x:Name="ToggleCredentialsButton"
+                        Content="Show"
+                        Width="60"
+                        HorizontalAlignment="Right"
+                        Click="ToggleCredentialsButton_Click"/>
+                </DockPanel>
+
+                <StackPanel x:Name="CredentialsPanel" Visibility="Collapsed">
+                    <TextBlock Text="CLIENT ID" Margin="0,0,0,5"/>
+                    <TextBox 
+                        x:Name="ClientIdInput"
+                        Height="30"
+                        Margin="0,0,0,10"
+                        TextChanged="ClientIdInput_TextChanged"/>
+
+                    <TextBlock Text="ACCESS TOKEN" Margin="0,0,0,5"/>
+                    <TextBox 
+                        x:Name="AccessTokenInput"
+                        Height="30"
+                        Margin="0,0,0,10"
+                        TextChanged="AccessTokenInput_TextChanged"/>
+                </StackPanel>
+            </StackPanel>
             
             <!-- Ad Time Input -->
-            <DockPanel Margin="0,0,0,20">
+            <DockPanel Margin="0,0,0,10">
                 <TextBlock 
                     Text="Ad Time (seconds):"
                     VerticalAlignment="Center"
@@ -41,7 +74,23 @@
                     ValueChanged="AdTimeInput_ValueChanged"/>
             </DockPanel>
 
-            <!-- Prediction Choices -->
+            <CheckBox 
+                x:Name="AutoRunAdsCheckbox"
+                Content="Automatically run ads after games"
+                Margin="0,0,0,20"
+                IsChecked="{Binding AutoRunAds, Source={x:Static props:Settings.Default}}"
+                Checked="AutoRunAdsCheckbox_Checked"
+                Unchecked="AutoRunAdsCheckbox_Checked"/>
+
+            <!-- Prediction Settings -->
+            <CheckBox 
+                x:Name="AutoRunPredictionsCheckbox"
+                Content="Automatically run predictions"
+                Margin="0,0,0,10"
+                IsChecked="{Binding AutoRunPredictions, Source={x:Static props:Settings.Default}}"
+                Checked="AutoRunPredictionsCheckbox_Checked"
+                Unchecked="AutoRunPredictionsCheckbox_Checked"/>
+
             <TextBlock 
                 Text="Prediction Choices:"
                 Margin="0,0,0,10"/>
