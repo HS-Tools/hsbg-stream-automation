@@ -1,0 +1,18 @@
+{
+    "twitch": {
+        "_comment": "Get these values from your Twitch Developer Console (https://dev.twitch.tv/console)",
+        "clientId": "your_client_id_here",
+        "clientSecret": "your_client_secret_here",
+        "oauthToken": "your_oauth_token_here",
+        "broadcasterId": "your_broadcaster_id_here"
+    },
+    "predictions": {
+        "_comment": "Configure the prediction settings",
+        "possiblePlacements": [2, 3, 4],
+        "durationSeconds": 120
+    },
+    "ads": {
+        "_comment": "Configure the commercial break settings",
+        "durationSeconds": 90
+    }
+} 
