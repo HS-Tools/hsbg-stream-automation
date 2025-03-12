@@ -6,11 +6,13 @@
 4. Copy the `HSBG_Ads_Predictions_for_Twitch` folder to the `HearthstoneDeckTracker\Plugins` folder.
 5. Restart HDT and enable the plugin.
 
-## Add your twitch credentials
-Go to https://twitchtokengenerator.com/quick/T3AZGjYdBd
+## Add your twitch credentials (May have to do every 60 days because the token expires)
+1. Go to https://twitchtokengenerator.com/quick/T3AZGjYdBd
 
-Copy Access Token and Client ID into the plugin settings
+2. Copy Access Token and Client ID into the plugin settings
 
-You may have to do this step every 60 days because the token expires
+![image](https://github.com/user-attachments/assets/f0429728-e832-4cd3-9ca7-7480bf714b58)
+
+3. Add to your plugin settings
 
 ![image](https://i.imgur.com/oPgEdOH.png)
