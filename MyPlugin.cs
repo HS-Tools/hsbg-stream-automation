@@ -297,7 +297,28 @@ namespace HSBG_Ads_Predictions_for_Twitch
         {
             try
             {
-                _config = AppConfig.LoadFromFile();
+                var pluginDirectory = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "HearthstoneDeckTracker",
+                    "Plugins",
+                    "HSBG_Ads_Predictions_for_Twitch"
+                );
+                var configPath = Path.Combine(pluginDirectory, "config.json");
+                
+                if (!File.Exists(configPath))
+                {
+                    var exampleConfigPath = Path.Combine(pluginDirectory, "config.example.json");
+                    if (File.Exists(exampleConfigPath))
+                    {
+                        File.Copy(exampleConfigPath, configPath);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException($"Neither config.json nor config.example.json found in {pluginDirectory}");
+                    }
+                }
+
+                _config = AppConfig.LoadFromFile(configPath);
             }
             catch (Exception ex)
             {
@@ -336,7 +357,6 @@ namespace HSBG_Ads_Predictions_for_Twitch
                 if (_predictionStarted) return;
                 _predictionStarted = true;
                 
-                // Cancel any existing predictions before creating a new one
                 await _twitchIntegration.CancelActivePredictionsAsync();
                 
                 var heroName = Core.Game.Player.Hero.Card.LocalizedName ?? "Hero";
@@ -346,9 +366,6 @@ namespace HSBG_Ads_Predictions_for_Twitch
                 var title = $"Top {_currentTargetPlace} with {heroName}?";
                 var outcomes = new List<string> { "Yes", "No" };
                 await _twitchIntegration.CreatePredictionAsync(title, outcomes, _config.Predictions.DurationSeconds);
-
-                // Show notification when prediction starts
-                MessageBox.Show($"Will {heroName} finish in Top {_currentTargetPlace}?", "Prediction started!", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

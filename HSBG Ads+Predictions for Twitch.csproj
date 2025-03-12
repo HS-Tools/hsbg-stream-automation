@@ -112,6 +112,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ReadMe.md" />
+    <None Include="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="config.example.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="libs\HearthDb.dll" />
@@ -126,8 +132,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Debug (
-   copy "$(TargetDir)$(ProjectName).dll" "%AppData%\HearthstoneDeckTracker\Plugins" /y 
-   copy "$(TargetDir)Newtonsoft.Json.dll" "%AppData%\HearthstoneDeckTracker\Plugins" /y
+   mkdir "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch"
+   copy "$(TargetDir)$(ProjectName).dll" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y 
+   copy "$(TargetDir)Newtonsoft.Json.dll" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y
+   copy "$(TargetDir)config.json" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>

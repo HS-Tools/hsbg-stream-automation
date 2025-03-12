@@ -19,7 +19,17 @@ Twitch Integration has been done on python in twitch_integration.py and main.py.
 Examples of how to implement placement/hero name logic can be found in ReferenceHDT.cs
 
 Phase 1:
-1. Use static variables for twitch config in .env file
-2. OnGameStart, get hero name and start prediction based on config
+1. Use static variables for twitch config in config file
+2. OnTurnStart, get hero name and start prediction based on config
+3. OnGameEnd, resolve prediction and run ad
 
+Phase 2:
+Implement plugin settings to configure ad time and which predictions to run
+
+Ad time is int between 30 and 120 seconds
+Predictions to run will be an array of ints where an int refers to the placement we're betting >= to or < to
+Example: [1, 2, 3]: will randomly choose between top 1, top 2 or top 3
+
+Phase 3:
+Twitch OAuth to populate config variables
 
