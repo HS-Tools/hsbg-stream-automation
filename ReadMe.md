@@ -11,7 +11,7 @@
 
 2. Copy Access Token and Client ID into the plugin settings
 
-![image]([https://github.com/user-attachments/assets/f0429728-e832-4cd3-9ca7-7480bf714b58](https://i.imgur.com/7DcITnC.png))
+![image](https://i.imgur.com/7DcITnC.png))
 
 3. Add to your plugin settings
 
