@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 using Hearthstone_Deck_Tracker.Enums;
 using HearthDb.Enums;
+using System.Media;
 
 namespace HSBG_Ads_Predictions_for_Twitch
 {
@@ -329,8 +330,33 @@ namespace HSBG_Ads_Predictions_for_Twitch
                 _currentTargetPlace = predictionChoices[_random.Next(predictionChoices.Length)];
                 
                 var title = $"Top {_currentTargetPlace} with {heroName}?";
+                // Ensure title doesn't exceed 60 characters
+                if (title.Length > 60)
+                {
+                    title = title.Substring(0, 57) + "...";
+                }
                 var outcomes = new List<string> { "Yes", "No" };
                 await _twitchIntegration.CreatePredictionAsync(title, outcomes, 120);
+
+                // Play sound if the setting is enabled
+                if (Settings.Default.PlaySoundOnPrediction)
+                {
+                    try
+                    {
+                        var soundPath = System.IO.Path.Combine(
+                            System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                            "alert.wav"
+                        );
+                        using (var soundPlayer = new SoundPlayer(soundPath))
+                        {
+                            soundPlayer.Play();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Hearthstone_Deck_Tracker.Utility.Logging.Log.Error($"Failed to play sound: {ex.Message}");
+                    }
+                }
             }
             catch (Exception ex)
             {

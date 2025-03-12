@@ -144,5 +144,17 @@ namespace HSBG_Ads_Predictions_for_Twitch.Properties {
                 this["AutoRunPredictions"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaySoundOnPrediction {
+            get {
+                return ((bool)(this["PlaySoundOnPrediction"]));
+            }
+            set {
+                this["PlaySoundOnPrediction"] = value;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.Controls;
 using Core = Hearthstone_Deck_Tracker.API.Core;
+using System.Media;
 
 namespace HSBG_Ads_Predictions_for_Twitch.Controls
 {
@@ -126,6 +127,15 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             if (e.NewValue.HasValue)
             {
                 Properties.Settings.Default.AdTime = (int)e.NewValue.Value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void PlaySoundCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkbox)
+            {
+                Properties.Settings.Default.PlaySoundOnPrediction = checkbox.IsChecked ?? false;
                 Properties.Settings.Default.Save();
             }
         }

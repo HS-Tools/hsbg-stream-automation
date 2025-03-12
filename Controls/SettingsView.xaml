@@ -104,6 +104,14 @@
                 <ListBoxItem Content="Top 3"/>
                 <ListBoxItem Content="Top 4"/>
             </ListBox>
+
+            <CheckBox 
+                x:Name="PlaySoundCheckbox"
+                Content="Sound Alert on prediction start"
+                Margin="0,0,0,20"
+                IsChecked="{Binding PlaySoundOnPrediction, Source={x:Static props:Settings.Default}}"
+                Checked="PlaySoundCheckbox_Checked"
+                Unchecked="PlaySoundCheckbox_Checked"/>
         </StackPanel>
     </Grid>
 </ScrollViewer>

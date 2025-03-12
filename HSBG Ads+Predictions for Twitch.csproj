@@ -123,13 +123,19 @@
       <LastGenOutput>StringsResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\alert.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>alert.wav</Link>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Debug (
    mkdir "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch"
    copy "$(TargetDir)$(ProjectName).dll" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y 
    copy "$(TargetDir)Newtonsoft.Json.dll" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y
-   copy "$(TargetDir)config.json" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y
+   copy "$(TargetDir)alert.wav" "%AppData%\HearthstoneDeckTracker\Plugins\HSBG_Ads_Predictions_for_Twitch" /y
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>
