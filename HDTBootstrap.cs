@@ -76,7 +76,6 @@ namespace HSBG_Ads_Predictions_for_Twitch
         {
             Settings.Default.Save();
 
-            pluginInstance?.CleanUp();
             pluginInstance = null;
         }
 

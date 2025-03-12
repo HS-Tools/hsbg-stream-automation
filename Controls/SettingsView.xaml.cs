@@ -33,7 +33,8 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
                 var savedChoices = Properties.Settings.Default.PredictionChoices.Cast<string>().ToList();
                 foreach (ListBoxItem item in PredictionChoices.Items)
                 {
-                    item.IsSelected = savedChoices.Contains(item.Content.ToString());
+                    var itemValue = item.Content.ToString();
+                    item.IsSelected = savedChoices.Any(choice => itemValue.EndsWith(choice));
                 }
             }
 
@@ -89,15 +90,16 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
 
             if (selectedItems.Count > 0)
             {
-                Properties.Settings.Default.PredictionChoices = new System.Collections.Specialized.StringCollection();
-                Properties.Settings.Default.PredictionChoices.AddRange(selectedItems.ToArray());
-                Properties.Settings.Default.Save();
+                var collection = new System.Collections.Specialized.StringCollection();
+                collection.AddRange(selectedItems.ToArray());
+                Properties.Settings.Default.PredictionChoices = collection;
             }
             else
             {
                 Properties.Settings.Default.PredictionChoices = null;
-                Properties.Settings.Default.Save();
             }
+            
+            Properties.Settings.Default.Save();
         }
 
         private void ToggleCredentialsButton_Click(object sender, RoutedEventArgs e)
