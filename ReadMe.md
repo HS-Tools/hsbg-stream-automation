@@ -3,7 +3,7 @@
 1. Download HSBG_Ads_Predictions_for_Twitch.zip from [releases page](https://github.com/HS-Tools/hsbg-stream-automation/releases).
 2. Extract the zip file.
 3. Open HDT, choose Options->Tracker->Plugins->Plugins Folder.
-4. Copy the `HSBG_Ads_Predictions_for_Twitch` folfsadfsd der to the `HearthstoneDeckTracker\Plugins` folder.
+4. Copy the `HSBG_Ads_Predictions_for_Twitch` folder to the `HearthstoneDeckTracker\Plugins` folder.
 5. Restart HDT and enable the plugin.
 
 ![image](https://i.imgur.com/kOsfufm.png)
