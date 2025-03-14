@@ -16,7 +16,7 @@
 2. Go to the plugin settings in HDT (options -> plugins -> automatic predictions and ads -> settings)
 
 3. Copy Access Token and Client ID into the plugin settings and delete the "" and paste them in **Be careful to put in access token and client id in the correct order and ignore refresh token**
-sdfsafasd
+
 4. Add to your plugin settings
 
 ![image](https://i.imgur.com/oPgEdOH.png)
