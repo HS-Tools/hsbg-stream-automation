@@ -11,7 +11,9 @@
 ## Add your twitch credentials (May have to do every 60 days because the token expires)
 1. Go to https://twitchtokengenerator.com/quick/T3AZGjYdBd
 
-2. Copy Access Token and Client ID into the plugin settings
+2. Go to the plugin settings in HDT (options -> plugins -> automatic predictions and ads -> settings)
+
+3. Copy Access Token and Client ID into the plugin settings and delete the "" and paste them in
 
 ![image](https://i.imgur.com/7DcITnC.png)
 
