@@ -171,6 +171,32 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             Properties.Settings.Default.Save();
         }
 
+        private void ToggleCredentialsButton_Click(object sender, RoutedEventArgs e)
+        {
+            _credentialsVisible = !_credentialsVisible;
+            CredentialsPanel.Visibility = _credentialsVisible ? Visibility.Visible : Visibility.Collapsed;
+            ToggleCredentialsButton.Content = _credentialsVisible ? "Hide" : "Show";
+        }
+
+        private void ClientIdInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Properties.Settings.Default.ClientId = ClientIdInput.Text;
+            Properties.Settings.Default.Save();
+        }
+
+        private void AccessTokenInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Properties.Settings.Default.AccessToken = AccessTokenInput.Text;
+            Properties.Settings.Default.Save();
+        }
+
+        private void GetCredentialsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the Twitch Token Generator in the default browser
+            var tokenGeneratorUrl = "https://twitchtokengenerator.com/quick/T3AZGjYdBd";
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tokenGeneratorUrl) { UseShellExecute = true });
+        }
+
         private void AdTimeInput_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double?> e)
         {
             if (e.NewValue.HasValue)

@@ -25,55 +25,36 @@
                 FontWeight="Bold"
                 Margin="0,0,0,20"/>
 
-            <!-- Twitch Integration Section -->
-            <StackPanel Margin="0,0,0,20">
-                <DockPanel Margin="0,0,0,10">
-                    <TextBlock 
-                        Text="Twitch Integration"
-                        FontSize="18"
-                        FontWeight="Bold"
-                        DockPanel.Dock="Left"/>
-                </DockPanel>
+            <TextBlock 
+                Text="If predictions aren't starting, reconfigure credentials"
+                FontStyle="Italic"
+                Foreground="Gray"
+                Margin="0,0,0,20"
+                TextWrapping="Wrap"/>
 
-                <StackPanel x:Name="TwitchLoginPanel">
-                    <Button 
-                        x:Name="ConnectTwitchButton"
-                        Height="40"
-                        Margin="0,0,0,10"
-                        Click="ConnectTwitchButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock 
-                                Text="Connect with Twitch"
-                                VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    
-                    <TextBlock 
-                        x:Name="ConnectionStatus"
-                        Text="Not connected to Twitch"
-                        Foreground="Gray"
-                        HorizontalAlignment="Center"
-                        Margin="0,0,0,10"/>
-                </StackPanel>
+            <!-- Twitch Credentials Section -->
 
-                <StackPanel x:Name="ConnectedPanel" Visibility="Collapsed">
-                    <TextBlock 
-                        x:Name="ConnectedChannelName"
-                        Text="Connected as: "
-                        Margin="0,0,0,10"
-                        HorizontalAlignment="Center"/>
-                    <Button 
-                        x:Name="ShowCredentialsButton"
-                        Content="Show Credentials"
+                <Button
+                    Content="Get Credentials"
+                    Width="120"
+                    HorizontalAlignment="Left"
+                    Margin="0,0,0,10"
+                    Click="GetCredentialsButton_Click"/>
+
+                <StackPanel x:Name="CredentialsPanel" Visibility="Collapsed">
+                    <TextBlock Text="ACCESS TOKEN" Margin="0,0,0,5"/>
+                    <TextBox 
+                        x:Name="AccessTokenInput"
                         Height="30"
                         Margin="0,0,0,10"
-                        Click="ShowCredentialsButton_Click"/>
-                    <Button 
-                        x:Name="DisconnectButton"
-                        Content="Disconnect"
+                        TextChanged="AccessTokenInput_TextChanged"/>
+
+                    <TextBlock Text="CLIENT ID" Margin="0,0,0,5"/>
+                    <TextBox 
+                        x:Name="ClientIdInput"
                         Height="30"
                         Margin="0,0,0,10"
-                        Click="DisconnectButton_Click"/>
+                        TextChanged="ClientIdInput_TextChanged"/>
                 </StackPanel>
             </StackPanel>
             
