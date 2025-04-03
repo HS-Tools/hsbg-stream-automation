@@ -122,6 +122,13 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             Properties.Settings.Default.Save();
         }
 
+        private void GetCredentialsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the Twitch Token Generator in the default browser
+            var tokenGeneratorUrl = "https://twitchtokengenerator.com/quick/T3AZGjYdBd";
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tokenGeneratorUrl) { UseShellExecute = true });
+        }
+
         private void AdTimeInput_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double?> e)
         {
             if (e.NewValue.HasValue)
