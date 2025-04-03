@@ -33,20 +33,6 @@
                 TextWrapping="Wrap"/>
 
             <!-- Twitch Credentials Section -->
-            <StackPanel Margin="0,0,0,20">
-                <DockPanel Margin="0,0,0,10">
-                    <TextBlock 
-                        Text="Twitch Credentials"
-                        FontSize="18"
-                        FontWeight="Bold"
-                        DockPanel.Dock="Left"/>
-                    <Button 
-                        x:Name="ToggleCredentialsButton"
-                        Content="Show"
-                        Width="60"
-                        HorizontalAlignment="Right"
-                        Click="ToggleCredentialsButton_Click"/>
-                </DockPanel>
 
                 <Button
                     Content="Get Credentials"
