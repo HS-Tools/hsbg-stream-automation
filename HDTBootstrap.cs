@@ -4,6 +4,7 @@ using HSBG_Ads_Predictions_for_Twitch.Properties;
 using System;
 using System.Reflection;
 using System.Windows.Controls;
+using HSBG_Ads_Predictions_for_Twitch.Configuration;
 
 namespace HSBG_Ads_Predictions_for_Twitch
 {
@@ -65,6 +66,9 @@ namespace HSBG_Ads_Predictions_for_Twitch
 
         public void OnLoad()
         {
+            // Load settings from persistent storage first
+            PersistentSettings.LoadSettings();
+            
             pluginInstance = new HSBG_Ads_Predictions_for_Twitch();
             AddMenuItem();
         }
@@ -74,7 +78,9 @@ namespace HSBG_Ads_Predictions_for_Twitch
         /// </summary>
         public void OnUnload()
         {
+            // Save settings to both default storage and our persistent storage
             Settings.Default.Save();
+            PersistentSettings.SaveSettings();
 
             pluginInstance = null;
         }
