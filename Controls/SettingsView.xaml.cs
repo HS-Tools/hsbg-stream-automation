@@ -6,10 +6,8 @@ using System.Windows.Controls;
 using MahApps.Metro.Controls;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 using System.Media;
-using HSBG_Ads_Predictions_for_Twitch.Properties;
 using System.Diagnostics;
-using System.Windows.Threading;
-using System.Configuration;
+using HSBG_Ads_Predictions_for_Twitch.Configuration;
 
 namespace HSBG_Ads_Predictions_for_Twitch.Controls
 {
@@ -24,13 +22,8 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
         {
             InitializeComponent();
             
-            // Check if we're already authenticated
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.AccessToken))
-            {
-                TwitchLoginPanel.Visibility = Visibility.Collapsed;
-                ConnectedPanel.Visibility = Visibility.Visible;
-                ConnectedChannelName.Text = "Connected to Twitch";
-            }
+            // Load settings from persistent storage before initializing controls
+            PersistentSettings.LoadSettings();
             
             InitializeControls();
         }
@@ -128,6 +121,9 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             {
                 Properties.Settings.Default.AutoRunAds = checkbox.IsChecked ?? true;
                 Properties.Settings.Default.Save();
+                
+                // Save to persistent storage
+                PersistentSettings.SaveSettings();
             }
         }
 
@@ -145,6 +141,9 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             {
                 Properties.Settings.Default.AutoRunPredictions = cb.IsChecked ?? true;
                 Properties.Settings.Default.Save();
+                
+                // Save to persistent storage
+                PersistentSettings.SaveSettings();
             }
         }
 
@@ -169,6 +168,9 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             }
             
             Properties.Settings.Default.Save();
+            
+            // Save to persistent storage
+            PersistentSettings.SaveSettings();
         }
 
         private void ToggleCredentialsButton_Click(object sender, RoutedEventArgs e)
@@ -182,19 +184,25 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
         {
             Properties.Settings.Default.ClientId = ClientIdInput.Text;
             Properties.Settings.Default.Save();
+            
+            // Save to persistent storage
+            PersistentSettings.SaveSettings();
         }
 
         private void AccessTokenInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             Properties.Settings.Default.AccessToken = AccessTokenInput.Text;
             Properties.Settings.Default.Save();
+            
+            // Save to persistent storage
+            PersistentSettings.SaveSettings();
         }
 
         private void GetCredentialsButton_Click(object sender, RoutedEventArgs e)
         {
             // Open the Twitch Token Generator in the default browser
             var tokenGeneratorUrl = "https://twitchtokengenerator.com/quick/T3AZGjYdBd";
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tokenGeneratorUrl) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(tokenGeneratorUrl) { UseShellExecute = true });
         }
 
         private void AdTimeInput_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double?> e)
@@ -203,6 +211,9 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             {
                 Properties.Settings.Default.AdTime = (int)e.NewValue.Value;
                 Properties.Settings.Default.Save();
+                
+                // Save to persistent storage
+                PersistentSettings.SaveSettings();
             }
         }
 
@@ -212,6 +223,9 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
             {
                 Properties.Settings.Default.PlaySoundOnPrediction = checkbox.IsChecked ?? false;
                 Properties.Settings.Default.Save();
+                
+                // Save to persistent storage
+                PersistentSettings.SaveSettings();
             }
         }
 

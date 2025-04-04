@@ -67,6 +67,7 @@
     <Compile Include="Controls\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\PersistentSettings.cs" />
     <Compile Include="Logic\InputMoveManager.cs" />
     <Compile Include="Logic\LocalizeTools.cs" />
     <Compile Include="MyPlugin.cs" />

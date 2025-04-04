@@ -12,6 +12,7 @@ using Core = Hearthstone_Deck_Tracker.API.Core;
 using Hearthstone_Deck_Tracker.Enums;
 using HearthDb.Enums;
 using System.Media;
+using HSBG_Ads_Predictions_for_Twitch.Configuration;
 
 namespace HSBG_Ads_Predictions_for_Twitch
 {
@@ -257,6 +258,9 @@ namespace HSBG_Ads_Predictions_for_Twitch
         {
             try
             {
+                // Load settings from persistent storage first
+                PersistentSettings.LoadSettings();
+                
                 if (string.IsNullOrEmpty(Settings.Default.ClientId) || string.IsNullOrEmpty(Settings.Default.AccessToken))
                 {
                     Hearthstone_Deck_Tracker.Utility.Logging.Log.Info("Twitch credentials not configured. Please set them in the plugin settings.");
