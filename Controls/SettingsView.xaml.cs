@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,6 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
     public partial class SettingsView : ScrollViewer
     {
         private static Flyout _flyout;
-        private bool _credentialsVisible = false;
 
         public SettingsView()
         {
@@ -30,10 +30,6 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
 
         private void InitializeControls()
         {
-            // Load Twitch credentials
-            ClientIdInput.Text = Properties.Settings.Default.ClientId;
-            AccessTokenInput.Text = Properties.Settings.Default.AccessToken;
-
             // Load saved prediction choices if they exist
             if (Properties.Settings.Default.PredictionChoices != null)
             {
@@ -58,6 +54,65 @@ namespace HSBG_Ads_Predictions_for_Twitch.Controls
                 Properties.Settings.Default.AutoRunPredictions = hasSelectedChoices;
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private void ConnectTwitchButton_Click(object sender, RoutedEventArgs e)
+        {
+            ConnectTwitchButton.IsEnabled = false;
+            ConnectionStatus.Text = "Connecting to Twitch...";
+            
+            try 
+            {
+                // Launch browser with auth URL
+                Process.Start("https://twitch-oauth-backend.vercel.app/api/start-twitch-auth");
+                
+                // For demo purposes, we'll simulate a successful auth
+                // In a real implementation, you would handle the callback from the OAuth service
+                Dispatcher.InvokeAsync(() => {
+                    TwitchLoginPanel.Visibility = Visibility.Collapsed;
+                    ConnectedPanel.Visibility = Visibility.Visible;
+                    ConnectedChannelName.Text = "Connected as: TwitchUser";
+                    
+                    // Store a dummy token for testing
+                    Properties.Settings.Default.AccessToken = "demo_token";
+                    Properties.Settings.Default.Save();
+                }, DispatcherPriority.Background);
+            }
+            catch (Exception ex)
+            {
+                ConnectionStatus.Text = $"Error: {ex.Message}";
+                ConnectTwitchButton.IsEnabled = true;
+            }
+        }
+
+        private void DisconnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Clear the stored tokens
+            Properties.Settings.Default.AccessToken = "";
+            //Properties.Settings.Default.RefreshToken = "";
+            Properties.Settings.Default.Save();
+            
+            // Update UI
+            TwitchLoginPanel.Visibility = Visibility.Visible;
+            ConnectedPanel.Visibility = Visibility.Collapsed;
+            ConnectionStatus.Text = "Not connected to Twitch";
+            ConnectTwitchButton.IsEnabled = true;
+        }
+
+        private void ShowCredentialsButton_Click(object sender, RoutedEventArgs e)
+        {
+            string message = $"Client ID: {Properties.Settings.Default.ClientId}\n" +
+                             $"Access Token: {Properties.Settings.Default.AccessToken}";
+            
+            // Show the credentials in a message box
+            MessageBox.Show(message, "Current Credentials", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+            // Also show the config file location
+            string configPath = System.Configuration.ConfigurationManager.OpenExeConfiguration(
+                System.Configuration.ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+            
+            MessageBox.Show($"Settings file location:\n{configPath}", 
+                "Config File Location", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void AutoRunAdsCheckbox_Checked(object sender, RoutedEventArgs e)
